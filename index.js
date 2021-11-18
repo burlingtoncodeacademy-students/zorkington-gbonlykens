@@ -10,9 +10,8 @@ function ask(questionText) {
     readlineInterface.question(questionText, resolve);
   });
 }
-/////////////////////////////////
+// -------- Program Start ------- //
 
-/////////////////////////////////
 //player 'deafults' makes sense to make it a const
 const player = {
   name: null,
@@ -41,7 +40,7 @@ const player = {
 
 
 class Room {
-  constructor(name, description, inventory, north, east, south, west, northeast, northwest, southeast, southwest) {
+  constructor(name, description, inventory, north, east, south, west) {
 
     this.name = name;
     this.description = description(Room.includes.MapStrings);
@@ -52,10 +51,6 @@ class Room {
     this.east = east || null;
     this.south = south || null;
     this.west = west || null;
-    this.northeast = northeast || null;
-    this.northwest = northwest || null;
-    this.southeast = southeast || null;
-    this.southwest = southwest || null;
 
     //for unlocking the Ice Age Door / or stays locked w/o item in inventory
     this.unlockIceAgeDoor = () => {
