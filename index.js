@@ -9,7 +9,7 @@ function ask(questionText) {
     readlineInterface.question(questionText, resolve);
   });
 }
-// -------- Program Start ------- //
+// ------------------------- Player --------------------------  //
 start();
 
 //player 'deafults' makes sense to make it a const
@@ -21,13 +21,16 @@ const player = {
   nextRoom: null,
   inventory: [],
 
+
+  // ------------------------- Functions --------------------------  //
+
   //viewing the room should list room inventory + pull from the const MapStrings for description
   viewRoom: () => {
     return this.currentRoom.description(MapStrings)
   },
 
-  // to move rooms, more commonly move to next room
-  moveRooms: (Room) => {
+  // to move/change rooms, more commonly move to next room
+  moveRoom: (Room) => {
     if (!Room.doorLocked) {
       player.currentRoom = Room
     } else {
@@ -35,6 +38,7 @@ const player = {
     }
   }
 }
+
 
 
 class Room {
@@ -191,8 +195,7 @@ const MapStrings = {
   + "\nTake the treasure chest back to your boat!",
 
 };
-//will hinder any of the above from being changed
-Object.freeze(MapStrings);
+
 
 const actions = {
   moving: ['walk', 'hike', 'crawl through', 'dig', 'cut through', 'enter', 'go', 'open'],
@@ -203,6 +206,7 @@ const actions = {
 
 let inventory = [];
 
+// class for creating items
 class Item {
   constructor(name, description, action, takeable) {
     this.name = name;
@@ -229,7 +233,7 @@ class Item {
   }
 }
 
-// items
+// list of items
 
 let newspaper = new Item(
   "folded newspaper",
