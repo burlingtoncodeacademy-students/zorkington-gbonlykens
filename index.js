@@ -1,4 +1,3 @@
-const readline = require("constants");
 const readline = require("readline");
 const readlineInterface = readline.createInterface(
   process.stdin,
@@ -11,6 +10,7 @@ function ask(questionText) {
   });
 }
 // -------- Program Start ------- //
+start();
 
 //player 'deafults' makes sense to make it a const
 const player = {
@@ -33,9 +33,7 @@ const player = {
     } else {
       console.log("The ${room.name} is locked!")
     }
-
   }
-
 }
 
 
@@ -231,6 +229,8 @@ class Item {
   }
 }
 
+// items
+
 let newspaper = new Item(
   "folded newspaper",
   "The newspaper displays several articles.\nThere are numbers circled in red ink:\nThe date 'April 5th.\nThe number '9', in the article, '9 Sharks Spotted near Miami Beach'.\nAnd in the article, 'Twenty-two Palm Trees Fall Due to Storm,' the number is circled.",
@@ -328,7 +328,11 @@ let itemLookupTable = {
   treasure: treasure
 };
 
-start();
+// add all rooms in map to room look-up table
+let roomLookUpTable = {
+  startingRoom: startingRoom,
+}
+
 
 async function start() {
   const welcomeMessage = `459 Ocean Ave.
@@ -357,7 +361,6 @@ async function play() {
       console.log(lookupTable[target] instanceof Item);
       console.log("That's not an item.")
     }
-  } else if (action === " ")
-}
-///need to move a few things around, add a few components, modify user actions + commands
-
+  // } else if (action === " ")
+};
+//need to move a few things around, add a few components, modify user actions commands
