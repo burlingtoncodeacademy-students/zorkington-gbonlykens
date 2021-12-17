@@ -24,7 +24,7 @@ const player = {
 
   // view room method will list room inventory + pull from the desc from MapStrings const
   viewRoom: () => {
-    return this.currentRoom.description(MapStrings);
+    return this.currentRoom.description;
   },
 
   // method for move/change rooms
@@ -111,18 +111,6 @@ const player = {
     };
 
 
-//const for when player enters a particular room (MapStrings)
-//These are the strings for each room & pathway that will log when prompted
-
-
-  desc_CAVE_ROOM:
-    "You are finally standing in the Cave Room." +
-    "\nThe rounded walls are made of cold, damp rock." +
-    "\nThe trident, needed to slay the sea monster is speculated to be hidden in this room." +
-    "\nThere are three passageways in this room:" +
-    "\nThe south exit from which you came," +
-    "\nAnd a north exit, which leads to the boardwalk next to the marina.",
-
   desc_BOARDWALK:
     "You are standing on the Boardwalk." +
     "\nThere is a large sandcastle to the north." +
@@ -140,7 +128,7 @@ const player = {
     "\nThere are no other exits." +
     "\nThe Viking's treasure is in the treasure chest on the west side of the ship." +
     "\nTake the treasure chest back to your boat!",
-};
+
 
 const actions = {
   // specific actions player can use
@@ -380,14 +368,23 @@ class Room {
 
     let cave = new Room (
       "cave",
-      
+      "You are finally standing in the Cave Room." +
+    "\nThe rounded walls are made of cold, damp rock." +
+    "\nThe trident, needed to slay the sea monster is speculated to be hidden in this room." +
+    "\nThere are three passageways in this room:" +
+    "\nThe south exit from which you came," +
+    "\nAnd a north exit, which leads to the boardwalk next to the marina.",
+    ["trident"],
+    true
       );
 
-    let boardwalk = new Room ("boardwalk",)
+    let boardwalk = new Room (
+      "boardwalk",)
+      
     let marina = new Room ("marina",)
     
-/////
 
+// Item look-up table
 let itemLookupTable = {
   newspaper: newspaper,
   boots: boots,
@@ -403,7 +400,7 @@ let itemLookupTable = {
   treasure: treasure,
 };
 
-// add all rooms in map to room look-up table
+// Room look-up table
 let roomLookUpTable = {
   kitchen: kitchen,
   library: library,
@@ -424,8 +421,8 @@ On the door is a handwritten sign.`;
   process.exit();
 }
 
-async function play() {
-  let userAction = await ask("What would you like to do?");
+async function playGame() {
+  let playerChoice = await ask("What would you like to do?");
 
   let inputArray = userAction.toLowerCase().split(" ");
 
