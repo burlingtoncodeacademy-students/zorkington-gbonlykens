@@ -110,12 +110,7 @@ const player = {
       }
     };
 
-
-  desc_BOARDWALK:
-    "You are standing on the Boardwalk." +
-    "\nThere is a large sandcastle to the north." +
-    "\nIf you dig in the spot where the sandcastle is, you might find something." +
-    "\nThere is an exit to the east.",
+    
 
   desc_MARINA:
     "You are standing in the marina room." +
@@ -129,7 +124,7 @@ const player = {
     "\nThe Viking's treasure is in the treasure chest on the west side of the ship." +
     "\nTake the treasure chest back to your boat!",
 
-
+  
 const actions = {
   // specific actions player can use
   moving: [
@@ -309,17 +304,17 @@ let treasure = new Item(
   true
 );
 
-// ------ Room Class ----- //
+// ------------------------------- Room Class -------------------------------- //
 class Room {
-  constructor(name, description, roomInventory, connectingRooms, doorLocked) {
+  constructor(name, description, roomInventory, connectingRooms, locked) {
     this.name = name;
     this.description = description;
-    this.roomInventory = roomInventory || [];
-    this.connectingRooms = connectingRooms;
-    this.doorLocked = true;
+    this.roomInventory = [roomInventory];
+    this.connectingRooms = [connectingRooms];
+    this.locked = locked;
 
     // ---------------- room objects ---------------- //
-    let kitchen = new Room(
+    let kitchen = new Room (
       "kitchen",
       "You are standing in a farmhouse-style kitchen." +
     "\nThere is an exit to the north." +
@@ -375,12 +370,19 @@ class Room {
     "\nThe south exit from which you came," +
     "\nAnd a north exit, which leads to the boardwalk next to the marina.",
     ["trident"],
+    ["Jungle", "Boardwalk"],
     true
       );
 
     let boardwalk = new Room (
-      "boardwalk",)
-      
+      "boardwalk",
+      "You are standing on the Boardwalk." +
+    "\nThere is a large sandcastle to the north." +
+    "\nIf you dig in the spot where the sandcastle is, you might find something." +
+    "\nThere is an exit to the east.",
+    
+    )
+
     let marina = new Room ("marina",)
     
 
