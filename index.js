@@ -10,9 +10,6 @@ function ask(questionText) {
   });
 }
 
-// calling start so the game runs
-start();
-
 // <------------------------- Player --------------------------> //
 const player = {
   name: null,
@@ -28,20 +25,20 @@ const player = {
   },
 
   // method for move/change rooms
-  moveRoom: (Room) => {
+  moveRoom: (currentLocation) => {
     if (!Room.doorLocked) {
       player.currentRoom = Room;
     } else {
-      console.log("The ${room.name} is locked!");
+      console.log(`The ${room.name} is locked!`);
     }
   },
 };
 
-// <------------------------- Functions -------------------------->  //
+// <------------------------- Unlocking Locked Rooms -------------------------->  //
 
 
     //for unlocking the Ice Age Door / or stays locked w/o item in inventory
-    this.unlockIceAgeDoor = () => {
+    this.unlockArcticRoom = () => {
       if (player.inventory.includes(Item["boots"])) {
         if (this.doorLocked === false) {
           return "Because you have the boots, the door to the Ice Age Room has opened. You may proceed.";
@@ -51,20 +48,8 @@ const player = {
       }
     };
 
-    //for unlocking the Cave Room Door / or stays locked w/o pumpkin in inventory
-    this.unlockCaveRoomDoor = () => {
-      if (player.inventory.includes(Item["pumpkin"])) {
-        if (this.doorLocked === false) {
-          return "This door has unlocked since you are in possession of the sacred Jack-O-Lantern.";
-        } else {
-          this.doorLocked === true;
-          return "You must climb the giant tree in the Jungle Room to get the pumpkin before accessing the Cave Room.";
-        }
-      }
-    };
-
     // for unlocking the Boardwalk / or stays locked w/o the trident in inventory
-    this.unlockBoardwalkDoor = () => {
+    this.unlockBoardwalk = () => {
       if (player.inventory.includes(Item["trident"])) {
         if (this.doorLocked === false) {
           return "The trident you possess in your inventory has granted you access to the Boardwalk. You may enter.";
@@ -99,7 +84,7 @@ const player = {
       }
     };
 
-    this.unlockSunkenShipDoor = () => {
+    this.unlockShip = () => {
       if (player.inventory.includes(Item["armor"])) {
         if (this.doorLocked === false) {
           return "You may enter the Sunken Ship since you possess the Ancient Viking Armor.";
@@ -110,24 +95,10 @@ const player = {
       }
     };
 
-    
-
-  desc_MARINA:
-    "You are standing in the marina room." +
-    "\nThere are many boats docked here." +
-    "\nTo find out which one to take, you might need to examine the boat key." +
-    "\nThere is an exit to the north, leading to your next room.",
-
-  desc_SUNKEN_SHIP_ROOM:
-    "You've finally made it to the Sunken Ship Room." +
-    "\nThere are no other exits." +
-    "\nThe Viking's treasure is in the treasure chest on the west side of the ship." +
-    "\nTake the treasure chest back to your boat!",
-
   
-const actions = {
+const userAction = {
   // specific actions player can use
-  moving: [
+  move: [
     "walk",
     "hike",
     "crawl through",
@@ -136,6 +107,7 @@ const actions = {
     "enter",
     "go",
     "open",
+    "drive"
   ],
 
   use: [
@@ -170,7 +142,7 @@ class Item {
     this.action = action || "nothing happens.";
     // some are takeable, some are not
     this.takeable = takeable || false;
-    this.locked = locked || true;
+   
   }
 
   // ------ Item Class Methods ----- //
@@ -182,7 +154,7 @@ class Item {
         `Oh no! You cannot open the ${this.name}. You must unlock it first!`
       );
     }
-  }
+  };
 
   // method for taking an item
   take() {
@@ -217,13 +189,6 @@ class Item {
     }
   }
 
-  use() {
-    if (this.name === "door4" && inventory.includes("parka")) {
-      return "You can open door number four, since you have the parka in your inventory.";
-    } else {
-      return this.action;
-    }
-  }
 
   // method for dropping an item in inventory
   drop () {
@@ -243,7 +208,13 @@ class Item {
       console.log(`You cannot drop the ${this.name} because it is not in your inventory!`);
     }
   }
+
+  // method for viewing an item
+  examine() {
+    console.log(`You see ${this.description}`);
+  }
 }
+
 
 // ---- list of items ---- //
 
@@ -263,25 +234,17 @@ let boots = new Item(
 let machete = new Item(
   "machete",
   "the machete may be useful in a jungle",
-  "can cut through a thick jungle",
+  "cut",
   true
 );
 
-let gianttree = new Item(
-  "giant tree",
-  "a giant tree with enough footholds and thick branches to climb.",
-  "climb tree",
-  false
-);
 
-let pumpkin = new Item(
-  "pumpkin",
-  "a Sacred Jack-O-Lantern, or pumpkin, is seen hanging from a leaf of the tree as if it were ripe for plucking.",
-  "can be used as a source of light later on, if needed.",
+let key = new Item(
+  "key",
+  "a metal boat key",
+  "use key",
   true
-);
-
-let key = new Item("key", "a metal boat key", true);
+  );
 
 let boat = new Item(
   "boat",
@@ -303,6 +266,7 @@ let treasure = new Item(
   "take treasure",
   true
 );
+
 
 // ------------------------------- Room Class -------------------------------- //
 class Room {
@@ -380,10 +344,31 @@ class Room {
     "\nThere is a large sandcastle to the north." +
     "\nIf you dig in the spot where the sandcastle is, you might find something." +
     "\nThere is an exit to the east.",
-    
-    )
+    ["boat key"],
+    ["cave", "marina"]
+    );
 
-    let marina = new Room ("marina",)
+    let marina = new Room (
+      "marina",
+      "You are standing in the marina room." +
+      "\nThere are many boats docked here." +
+      "\nTo find out which one to take, you might need to examine the boat key." +
+      "\nThere is an exit to the north, leading to your next room.",
+      ["boat"],
+      ["boardwalk", "ship"]
+      );
+
+      let ship = new Room(
+        "ship",
+        "You've finally made it to the Sunken Ship Room." +
+        "\nThere are no other exits." +
+        "\nThe Viking's treasure is in the treasure chest on the west side of the ship." +
+        "\nTake the treasure chest back to your boat!",
+        ["chest", "treasure"],
+        ["marina"]
+      );
+  }
+}
     
 
 // Item look-up table
@@ -393,12 +378,10 @@ let itemLookupTable = {
   chest: chest,
   armor: armor,
   machete: machete,
-  tree: tree,
-  pumpkin: pumpkin,
   trident: trident,
-  book: book,
   "boat key": boatkey,
   boat: boat,
+  chest: chest,
   treasure: treasure,
 };
 
@@ -410,36 +393,57 @@ let roomLookUpTable = {
   jungle: jungle,
   cave: cave,
   boardwalk: boardwalk,
-  marina: marina
+  marina: marina,
+  ship: ship,
 };
 
-async function start() {
-  const welcomeMessage = `459 Ocean Ave.
-You are standing on Ocean Avenue between Mediterranean Avenue and Seaweed Terrace.
+const welcomeMessage = `459 Ocean Ave.
+You are standing on Ocean Avenue between Mediterranean Avenue and Seaweed Terrace. Your objective is to reach the ship room, 'open' the chest to retrieve the Ancient Viking treasure, put the boat into your inventory, and execute the action 'drive' into the horizons of the sea. 
 There is a door here. A keypad sits on the handle.
 On the door is a handwritten sign.`;
-  let answer = await ask(welcomeMessage);
-  console.log("Now write your code to make this work!");
-  process.exit();
-}
 
-async function playGame() {
-  let playerChoice = await ask("What would you like to do?");
-
+async function start() {
+  console.log(welcomeMessage);
+ // userAction variable stores input from player
+  let userAction = await ask("What would you like to do?");
+// sanitizing player input and makes it lower case
   let inputArray = userAction.toLowerCase().split(" ");
-
+// takes input array at index 0
   let action = inputArray[0];
-
+// checks the last input and join finds it in the look up table, takes the input array and slices it at the first index of array then joins back together
   let target = inputArray.slice(1).join(" ");
 
+  // nested else-ifs depending on what route the player decides to take
   if (action === "use") {
-    console.log(itemLookupTable[target].use());
-  } else if (action === "take") {
-    if (itemLookupTable[target] instanceof Item) {
-      console.log(lookupTable[target] instanceof Item);
-      console.log("That's not an item.");
+    console.log(itemLookupTable[target] instanceof Item); 
+      // condition for if an item exists in player's current room & is takeable
+      start();
+      
+    } else if (action === "take"){
+      if (itemLookupTable[target] instanceof Item.takeable) {
+        // item is takeable
+        console.log(itemLookupTable[target].take());
+        start();
+      } else {
+        // item is not takeable
+        console.log("You cannot take that.");
+      }
+    } else if (action === "examine") {
+      // allows player to examine and get description of item
+      itemLookupTable[target].examine();
+      start();
+    } else if (action === "drop") {
+      // drops an item as described in player method above
+      console.log(itemLookupTable[target].drop());
+    } else if (action === "move") {
+      roomLookUpTable[target].connectingRooms.moveRoom();
+    } else {
+      console.log("Please enter a valid response");
+      start();
     }
-  }
-  // } else if (action === " ")
-}
-//need to move a few things around, add a few components, modify user actions commands
+       
+  } 
+ 
+
+//starts game
+start();
