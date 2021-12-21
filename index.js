@@ -95,39 +95,6 @@ const player = {
       }
     };
 
-  
-const userAction = {
-  // specific actions player can use
-  move: [
-    "walk",
-    "hike",
-    "crawl through",
-    "dig",
-    "cut through",
-    "enter",
-    "go",
-    "open",
-    "drive"
-  ],
-
-  use: [
-    "use",
-    "read",
-    "take"
-  ],
-
-  chest:[
-    "open",
-    "unlock",
-    "close"
-  ],
-
-  drop: [
-    "drop",
-    "remove"
-  ],
-};
-
 let inventory = [];
 
 // <------------------------- Classes --------------------------->  //
@@ -274,8 +241,7 @@ class Room {
     this.name = name;
     this.description = description;
     this.roomInventory = [roomInventory];
-    this.connectingRooms = [connectingRooms];
-    this.locked = locked;
+    this.locked = false
 
     // ---------------- room objects ---------------- //
     let kitchen = new Room (
@@ -284,7 +250,6 @@ class Room {
     "\nThere is an exit to the north." +
     "\nThere is something on the counter.",
       ["newspaper"],
-      ["library"],
       false
       );
 
@@ -295,7 +260,6 @@ class Room {
       "\nA pair of boots sit on the floor." +
       "\nThere is an exit door on the east side of the room.",
       ["boots"],
-      ["arctic", "kitchen"],
       false
       );
 
@@ -307,7 +271,6 @@ class Room {
     "\nIn the center of the room there is a large circular hole cut into the ice." +
     "\nPerhaps there is something valuable down there.",
     ["chest"],
-    ["jungle", "library"],
     true
       );
 
@@ -321,7 +284,6 @@ class Room {
     "\nIt may also be refered to as a 'pumpkin'." +
     "\nIt may prove useful to you on your quest.",
     ["machete", "pumpkin", "tree"],
-    ["cave", "arctic"],
     false
       );
 
@@ -334,7 +296,6 @@ class Room {
     "\nThe south exit from which you came," +
     "\nAnd a north exit, which leads to the boardwalk next to the marina.",
     ["trident"],
-    ["Jungle", "Boardwalk"],
     true
       );
 
@@ -345,7 +306,6 @@ class Room {
     "\nIf you dig in the spot where the sandcastle is, you might find something." +
     "\nThere is an exit to the east.",
     ["boat key"],
-    ["cave", "marina"]
     );
 
     let marina = new Room (
@@ -355,7 +315,6 @@ class Room {
       "\nTo find out which one to take, you might need to examine the boat key." +
       "\nThere is an exit to the north, leading to your next room.",
       ["boat"],
-      ["boardwalk", "ship"]
       );
 
       let ship = new Room(
@@ -365,42 +324,100 @@ class Room {
         "\nThe Viking's treasure is in the treasure chest on the west side of the ship." +
         "\nTake the treasure chest back to your boat!",
         ["chest", "treasure"],
-        ["marina"]
       );
   }
 }
     
-
+// --------------------------- Look Up Tables --------------------------- //
 // Item look-up table
 let itemLookupTable = {
-  newspaper: newspaper,
-  boots: boots,
-  chest: chest,
-  armor: armor,
-  machete: machete,
-  trident: trident,
-  "boat key": boatkey,
-  boat: boat,
-  chest: chest,
-  treasure: treasure,
+  'newspaper': newspaper,
+  'boots': boots,
+  'chest': chest,
+  'armor': armor,
+  'machete': machete,
+  'trident': trident,
+  'boat key': boatkey,
+  'boat': boat,
+  'chest': chest,
+  'treasure': treasure,
 };
 
 // Room look-up table
 let roomLookUpTable = {
-  kitchen: kitchen,
-  library: library,
-  arctic: arctic,
-  jungle: jungle,
-  cave: cave,
-  boardwalk: boardwalk,
-  marina: marina,
-  ship: ship,
+  'kitchen': kitchen,
+  'library': library,
+  'arctic': arctic,
+  'jungle': jungle,
+  'cave': cave,
+  'boardwalk': boardwalk,
+  'marina': marina,
+  'ship': ship,
 };
+
+// Look up table for actions 
+const actions = {
+  move: [
+    "walk",
+    "crawl",
+    "dig",
+    "dive",
+    "swim",
+    "jump",
+    "cut",
+    "enter",
+    "go",
+    "run",
+    "drive",
+    "move"
+  ],
+  use: [
+    "use",
+    "read",
+    "take"
+  ],
+  examine: [
+    "examine",
+    "read",
+    "view"
+  ],
+
+  chest: [
+    "open",
+    "unlock",
+    "close"
+  ],
+
+  drop: [
+    "drop",
+    "remove",
+    "throw",
+    "leave"
+  ],
+}
+
+// --------------------------- State Changes --------------------------- //
+
+// table for what rooms connect to each other
+let connectingRooms = {
+  'kitchen': { canMoveTo: ['library'] },
+  'library': { canMoveTo: ['kitchen', 'arctic'] },
+  'arctic': { canMoveTo: ['library', 'jungle'] },
+  'jungle': { canMoveTo: ['arctic', 'cave'] },
+  'cave': { canMoveTo: ['jungle', 'boardwalk'] },
+  'boardwalk': { canMoveTo: ['cave', 'marina'] },
+  'marina': { canMoveTo: ['boardwalk', 'ship'] },
+  'ship': {canMoveTo: ['marina']}
+};
+
+// player's starting room
+let currentState = 'kitchen'
+
+// --------------------------- Game --------------------------- //
 
 const welcomeMessage = `459 Ocean Ave.
 You are standing on Ocean Avenue between Mediterranean Avenue and Seaweed Terrace. Your objective is to reach the ship room, 'open' the chest to retrieve the Ancient Viking treasure, put the boat into your inventory, and execute the action 'drive' into the horizons of the sea. 
-There is a door here. A keypad sits on the handle.
-On the door is a handwritten sign.`;
+There is a door here.`;
 
 async function start() {
   console.log(welcomeMessage);
@@ -447,3 +464,4 @@ async function start() {
 
 //starts game
 start();
+
